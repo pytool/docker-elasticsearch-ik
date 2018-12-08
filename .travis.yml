@@ -1,0 +1,36 @@
+language: bash
+sudo: required
+services: docker
+# branches:
+#   only:
+#     - master
+
+before_script:
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - sudo sysctl -w vm.max_map_count=262144
+
+script:
+  # - docker build -t $DOCKER_USERNAME/burpsuite .
+  # - docker build -t $TRAVIS_REPO_SLUG .
+  # - docker push ${TRAVIS_REPO_SLUG}
+    - if [ "$TRAVIS_BRANCH" == "master" ]; then
+        docker build -t ${TRAVIS_REPO_SLUG}:latest .;
+        docker push ${TRAVIS_REPO_SLUG}:latest;
+     fi
+    - |
+      if [ -n "${TRAVIS_TAG}" ]; then
+        docker build -t ${TRAVIS_REPO_SLUG}:${TRAVIS_TAG} .;
+        docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_TAG};
+      fi
+after_script:
+  - docker images
+after_success:
+#  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+#    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+#    docker push $DOCKER_USERNAME/burpsuite;
+#    fi
+
+      # docker tag $TRAVIS_REPO_SLUG ${OWNER_NAME}/${REPO_NAME}:$TRAVIS_TAG &&
+notifications:
+  email:
+    - admin@pytool.com
