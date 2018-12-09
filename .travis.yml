@@ -10,13 +10,13 @@ before_script:
   - sudo sysctl -w vm.max_map_count=262144
 
 script:
-  - docker build -t $DOCKER_USERNAME/elasticsearch:ik .
-  - docker push $DOCKER_USERNAME/elasticsearch:ik
   # - docker build -t $TRAVIS_REPO_SLUG .
   # - docker push ${TRAVIS_REPO_SLUG}
     - if [ "$TRAVIS_BRANCH" == "master" ]; then
         docker build -t ${TRAVIS_REPO_SLUG}:latest .;
         docker push ${TRAVIS_REPO_SLUG}:latest;
+        docker build -t $DOCKER_USERNAME/elasticsearch:ik .
+        docker push $DOCKER_USERNAME/elasticsearch:ik
      fi
     - |
       if [ -n "${TRAVIS_TAG}" ]; then
